@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/photo.dart';
 import '../providers/saved_provider.dart';
 import '../services/auth_service.dart';
+import 'home_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -15,8 +16,8 @@ class _MainShellState extends State<MainShell> {
   int _index = 0;
 
   // Temporary placeholders; we replace these one by one.
-  final List<Widget> _tabs = const [
-    _Placeholder('Home'),
+    final List<Widget> _tabs = const [
+    HomeScreen(),
     _Placeholder('Search'),
     _SavedTest(),
     _ProfileTest(),

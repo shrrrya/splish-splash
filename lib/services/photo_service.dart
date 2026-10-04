@@ -20,6 +20,7 @@ class PhotoService {
     );
 
     final res = await http.get(uri);
+    if (res.statusCode == 400 && page > 1) return []; // past the last page
     if (res.statusCode != 200) {
       throw Exception('Failed to load photos (${res.statusCode})');
     }
