@@ -1,13 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
+import 'providers/saved_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/login_screen.dart';
+import 'screens/main_shell.dart';
 import 'screens/signup_screen.dart';
 import 'screens/splash_screen.dart';
-import 'services/auth_service.dart';
 import 'theme.dart';
 
 Future<void> main() async {
@@ -19,9 +21,23 @@ Future<void> main() async {
   final themeProvider = ThemeProvider();
   await themeProvider.load();
 
+  final savedProvider = SavedProvider();
+  // Load this account's saved items on login (and on app start if already
+  // signed in); clear them on logout.
+  FirebaseAuth.instance.authStateChanges().listen((user) {
+    if (user == null) {
+      savedProvider.clear();
+    } else {
+      savedProvider.load(user.uid);
+    }
+  });
+
   runApp(
-    ChangeNotifierProvider.value(
-      value: themeProvider,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: themeProvider),
+        ChangeNotifierProvider.value(value: savedProvider),
+      ],
       child: const MyApp(),
     ),
   );
@@ -44,39 +60,8 @@ class MyApp extends StatelessWidget {
         '/': (_) => const SplashScreen(),
         '/login': (_) => const LoginScreen(),
         '/signup': (_) => const SignupScreen(),
-        '/home': (_) => const _TempHome(),
+        '/home': (_) => const MainShell(),
       },
-    );
-  }
-}
-
-// Temporary screen for testing auth. We'll replace it with the real home.
-class _TempHome extends StatelessWidget {
-  const _TempHome();
-
-  @override
-  Widget build(BuildContext context) {
-    final email = AuthService().currentUser?.email ?? '';
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Signed in as $email'),
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: () async {
-                await AuthService().signOut();
-                if (context.mounted) {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/login', (route) => false);
-                }
-              },
-              child: const Text('Logout'),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
