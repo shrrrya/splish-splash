@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _email = TextEditingController();
   final _password = TextEditingController();
+  final _confirm = TextEditingController();
   bool _obscure = true;
   bool _loading = false;
   String? _error;
@@ -20,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _email.dispose();
     _password.dispose();
+    _confirm.dispose();
     super.dispose();
   }
 
@@ -30,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _error = null;
     });
     try {
-      await AuthService().signIn(_email.text, _password.text);
+      await AuthService().signUp(_email.text, _password.text);
       if (!mounted) return;
       Navigator.of(context).pushNamedAndRemoveUntil('/home', (r) => false);
     } on AuthException catch (e) {
@@ -44,6 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.transparent),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -56,22 +59,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(Icons.photo_camera_rounded,
-                        size: 56, color: theme.colorScheme.primary),
-                    const SizedBox(height: 12),
-                    Text('Welcome back',
+                    Text('Create your account',
                         textAlign: TextAlign.center,
                         style: theme.textTheme.headlineMedium
                             ?.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
-                    Text('Log in to continue',
+                    Text('Join and start exploring',
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyMedium),
                     const SizedBox(height: 32),
                     TextFormField(
                       controller: _email,
                       keyboardType: TextInputType.emailAddress,
-                      autofillHints: const [AutofillHints.email],
                       decoration: const InputDecoration(
                         labelText: 'Email',
                         prefixIcon: Icon(Icons.email_outlined),
@@ -91,7 +90,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       controller: _password,
                       obscureText: _obscure,
-                      autofillHints: const [AutofillHints.password],
                       decoration: InputDecoration(
                         labelText: 'Password',
                         prefixIcon: const Icon(Icons.lock_outline),
@@ -104,9 +102,30 @@ class _LoginScreenState extends State<LoginScreen> {
                               setState(() => _obscure = !_obscure),
                         ),
                       ),
-                      validator: (v) => (v == null || v.isEmpty)
-                          ? 'Enter your password'
-                          : null,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Enter a password';
+                        if (v.length < 6) return 'Use at least 6 characters';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _confirm,
+                      obscureText: _obscure,
+                      decoration: const InputDecoration(
+                        labelText: 'Confirm password',
+                        prefixIcon: Icon(Icons.lock_outline),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Confirm your password';
+                        }
+                        if (v != _password.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
                     ),
                     if (_error != null) ...[
                       const SizedBox(height: 16),
@@ -125,14 +144,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: 20,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('Login'),
+                          : const Text('Sign up'),
                     ),
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: _loading
                           ? null
-                          : () => Navigator.of(context).pushNamed('/signup'),
-                      child: const Text("Don't have an account? Sign up"),
+                          : () => Navigator.of(context).pop(),
+                      child: const Text('Already have an account? Login'),
                     ),
                   ],
                 ),

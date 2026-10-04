@@ -5,7 +5,9 @@ import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'providers/theme_provider.dart';
 import 'screens/login_screen.dart';
+import 'screens/signup_screen.dart';
 import 'screens/splash_screen.dart';
+import 'services/auth_service.dart';
 import 'theme.dart';
 
 Future<void> main() async {
@@ -41,10 +43,40 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (_) => const SplashScreen(),
         '/login': (_) => const LoginScreen(),
-        '/home': (_) => const Scaffold(
-              body: Center(child: Text('Home (coming soon)')),
-            ),
+        '/signup': (_) => const SignupScreen(),
+        '/home': (_) => const _TempHome(),
       },
+    );
+  }
+}
+
+// Temporary screen for testing auth. We'll replace it with the real home.
+class _TempHome extends StatelessWidget {
+  const _TempHome();
+
+  @override
+  Widget build(BuildContext context) {
+    final email = AuthService().currentUser?.email ?? '';
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Signed in as $email'),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () async {
+                await AuthService().signOut();
+                if (context.mounted) {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/login', (route) => false);
+                }
+              },
+              child: const Text('Logout'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
