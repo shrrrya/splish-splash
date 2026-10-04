@@ -11,6 +11,7 @@ import 'screens/main_shell.dart';
 import 'screens/signup_screen.dart';
 import 'screens/splash_screen.dart';
 import 'theme.dart';
+import 'screens/photo_detail_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +62,7 @@ class MyApp extends StatelessWidget {
         '/login': (_) => const LoginScreen(),
         '/signup': (_) => const SignupScreen(),
         '/home': (_) => const MainShell(),
+        '/detail': (_) => const PhotoDetailScreen(),
       },
     );
   }

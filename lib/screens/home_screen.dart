@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../providers/photo_feed_controller.dart';
-import '../providers/saved_provider.dart';
 import '../services/photo_service.dart';
+import 'photo_detail_screen.dart';
 import '../widgets/photo_grid.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -50,8 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
               emptyMessage: 'No photos found.',
               // Temporary: tapping toggles save so we can test the saved logic.
               // Next step replaces this with the photo detail screen.
-              onTapPhoto: (photo) =>
-                  context.read<SavedProvider>().toggle(photo),
+              onTapPhoto: (photo) => Navigator.of(context).pushNamed(
+                '/detail',
+                arguments: PhotoDetailArgs(photo, 'feed-${photo.id}'),
+              ),
             ),
           ),
         ],

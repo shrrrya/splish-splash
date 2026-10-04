@@ -47,8 +47,8 @@ class PhotoTile extends StatelessWidget {
                     fit: BoxFit.cover,
                     memCacheWidth: 600,
                     fadeInDuration: const Duration(milliseconds: 250),
-                    placeholder: (_, __) => Container(color: placeholderColor),
-                    errorWidget: (_, __, ___) => Container(
+                    placeholder: (_, _) => Container(color: placeholderColor),
+                      errorWidget: (_, _, _) => Container(
                       color: placeholderColor,
                       child: const Icon(Icons.broken_image_outlined),
                     ),
