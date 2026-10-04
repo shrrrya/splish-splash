@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "847518586236",
+    "project_id": "splish-splash-b963c",
+    "storage_bucket": "splish-splash-b963c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:847518586236:android:825772da4ac877672940f9",
+        "android_client_info": {
+          "package_name": "com.example.splishsplash"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATrZzsDUyIqePQU6uIuB3JB7qRx15hQyM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
